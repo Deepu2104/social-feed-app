@@ -14,38 +14,58 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public String registerAdmin(UserDTO adminDTO) {
-
-        // since we don't have any intital admins so disabling this part
-//        User requester = userRepository.findById(requesterAdminId)
-//                .orElseThrow(() -> new RuntimeException("Requester admin not found"));
-//
-//        if (!"ADMIN".equals(requester.getRole())) {
-//            return "Access denied! Only admins can create other admins.";
-//        }
-
-        // or we can manually create the first admin
-//        INSERT INTO users (username, password, role)
-//        VALUES ('superadmin', '$2a$10$HbuFulHWZrNYqd2RPrfqAen7/2pZDgX2JU0FyV02dp9mMT7FAX3Qa', 'ADMIN');
-
-        User admin = new User();
-        admin.setUsername(adminDTO.getUsername());
-        admin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
-        admin.setRole(Role.ADMIN); // Explicitly setting role as ADMIN
-
-        userRepository.save(admin);
-        return "Admin user created successfully.";
-    }
 
     public String deleteUser(Long adminId, Long userId) {
         User admin = userRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
-        if (admin.getRole() != Role.ADMIN) {
-            return "Access denied! Only admins can delete users.";
+        if (admin.getRole() != Role.ADMIN && admin.getRole() != Role.OWNER) {
+            return "Access denied! Only admins or owners can delete users.";
         }
 
         userRepository.deleteById(userId);
         return "User deleted successfully.";
+    }
+
+    public String promoteToAdmin(Long ownerId, Long userId) {
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
+        if (owner.getRole() != Role.OWNER) {
+            return "Access denied! Only owners can promote users to admins.";
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole() == Role.ADMIN) {
+            return "User is already an admin!";
+        }
+
+        if(user.getRole() == Role.OWNER && userId.equals(ownerId)){
+            return "You can demote owmer to admin. No one can!";
+        }
+
+        user.setRole(Role.ADMIN);
+        userRepository.save(user);
+        return "User promoted to Admin successfully!";
+    }
+
+    public String demoteAdmin(Long ownerId, Long adminId) {
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
+        if (owner.getRole() != Role.OWNER) {
+            return "Access denied! Only owners can demote admins.";
+        }
+
+        User admin = userRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        if (admin.getRole() != Role.ADMIN) {
+            return "User is not an admin!";
+        }
+
+        admin.setRole(Role.USER);
+        userRepository.save(admin);
+        return "Admin demoted to User successfully!";
     }
 }

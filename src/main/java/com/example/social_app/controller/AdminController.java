@@ -31,9 +31,14 @@ public class AdminController {
         return ResponseEntity.ok(likeService.deleteLike(adminId, likeId));
     }
 
-    @PostMapping("/create-admin")
-    public ResponseEntity<String> createAdmin(@RequestBody UserDTO adminDTO) {
-        return ResponseEntity.ok(userService.registerAdmin(adminDTO));
+    @PostMapping("/promote/{ownerId}/{userId}")
+    public ResponseEntity<String> promoteToAdmin(@PathVariable Long ownerId, @PathVariable Long userId) {
+        return ResponseEntity.ok(userService.promoteToAdmin(ownerId, userId));
+    }
+
+    @PostMapping("/demote/{ownerId}/{adminId}")
+    public ResponseEntity<String> demoteAdmin(@PathVariable Long ownerId, @PathVariable Long adminId) {
+        return ResponseEntity.ok(userService.demoteAdmin(ownerId, adminId));
     }
 
 }

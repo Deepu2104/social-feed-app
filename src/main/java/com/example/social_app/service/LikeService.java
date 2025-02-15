@@ -75,8 +75,8 @@ public class LikeService {
         User admin = userRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
-        if (admin.getRole() != Role.ADMIN) {
-            return "Access denied! Only admins can delete likes.";
+        if (admin.getRole() != Role.ADMIN && admin.getRole() != Role.OWNER) {
+            return "Access denied! Only admins or owners can delete likes.";
         }
 
         likeRepository.deleteById(likeId);

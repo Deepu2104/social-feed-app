@@ -24,7 +24,12 @@ public class AuthService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole(Role.USER);
+
+        // If no owners exist, make this user an OWNER
+        boolean ownerExists = userRepository.existsByRole(Role.OWNER);
+        user.setRole(ownerExists ? Role.USER : Role.OWNER);
+
+//        user.setRole(Role.USER);
         userRepository.save(user);
         return "Signup successful!";
     }
