@@ -1,8 +1,11 @@
 package com.example.social_app.model;
 
+import com.example.social_app.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -23,5 +26,18 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String role; // USER or ADMIN
+    @Enumerated(EnumType.STRING)
+    private Role role; // USER or ADMIN or OWNER
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Activity> activities;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
 }

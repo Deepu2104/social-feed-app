@@ -3,6 +3,8 @@ package com.example.social_app.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "likes")
 @Getter
@@ -22,5 +24,10 @@ public class Like {
     @JoinColumn(name = "post_id", nullable = false) // Foreign key referencing "posts" table
     private Post post;
 
-    private String createdAt;
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

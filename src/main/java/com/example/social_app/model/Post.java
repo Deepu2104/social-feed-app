@@ -1,9 +1,11 @@
 package com.example.social_app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -24,6 +26,10 @@ public class Post {
     private String content;
 
     private LocalDateTime createdAt;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Like> likes;
 
     @PrePersist
     protected void onCreate() {

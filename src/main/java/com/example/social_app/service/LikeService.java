@@ -1,6 +1,7 @@
 package com.example.social_app.service;
 
 import com.example.social_app.dto.LikeDTO;
+import com.example.social_app.enums.Role;
 import com.example.social_app.model.Like;
 import com.example.social_app.model.Post;
 import com.example.social_app.model.User;
@@ -42,7 +43,7 @@ public class LikeService {
         Like like = new Like();
         like.setUser(user);
         like.setPost(post);
-        like.setCreatedAt(LocalDateTime.now().toString());
+        like.setCreatedAt(LocalDateTime.now());
 
         likeRepository.save(like);
         activityService.logActivity(user.getId(), ActivityType.LIKE, post.getId());
@@ -68,5 +69,17 @@ public class LikeService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         return likeRepository.countByPost(post);
+    }
+
+    public String deleteLike(Long adminId, Long likeId) {
+        User admin = userRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        if (admin.getRole() != Role.ADMIN) {
+            return "Access denied! Only admins can delete likes.";
+        }
+
+        likeRepository.deleteById(likeId);
+        return "Like deleted successfully.";
     }
 }

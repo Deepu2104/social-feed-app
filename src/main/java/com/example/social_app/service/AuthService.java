@@ -1,5 +1,6 @@
 package com.example.social_app.service;
 
+import com.example.social_app.enums.Role;
 import com.example.social_app.model.User;
 import com.example.social_app.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +24,7 @@ public class AuthService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole("USER");
+        user.setRole(Role.USER);
         userRepository.save(user);
         return "Signup successful!";
     }

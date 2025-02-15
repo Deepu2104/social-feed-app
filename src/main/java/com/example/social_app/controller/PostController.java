@@ -26,4 +26,10 @@ public class PostController {
     public ResponseEntity<List<Post>> getUserPosts(@PathVariable Long userId) {
         return ResponseEntity.ok(postService.getUserPosts(userId));
     }
+
+    // Api to show the user feed with posts from other users as well
+    @GetMapping("/feed/{userId}")
+    public ResponseEntity<List<Post>> getUserFeed(@PathVariable Long userId) {
+        return ResponseEntity.ok(postService.getUserFeed(userId));
+    }
 }
