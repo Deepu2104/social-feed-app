@@ -1,4 +1,3 @@
-
 Java, Spring boot, Postman, H2 database.
 
 Developed a social activity feed enabling users to create posts, like, follow, and block others, with a real-time
